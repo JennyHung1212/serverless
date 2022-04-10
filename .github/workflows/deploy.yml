@@ -1,0 +1,30 @@
+name: Lambda Function CI/CD
+env:
+  ARTIFACT_NAME: csye6225-lambda-${{ github.sha }}.zip
+on: push
+jobs:
+  build:
+    name: Build Artifact and Upload to S3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Deployment Artifact
+        run: |
+          mkdir codedeploy_zip_lambda
+          zip -r index.js.zip index.js
+          zip -r ${{ env.ARTIFACT_NAME }} index.js.zip codedeploy/*.sh appspec.yml
+          pwd
+          ls -al
+          mv ${{ env.ARTIFACT_NAME }} codedeploy_artifact/
+          cd codedeploy_artifact/
+          pwd
+          ls-al
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Copy Artifact to S3
+        run: |
+          aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
