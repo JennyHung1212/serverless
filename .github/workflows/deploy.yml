@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build Deployment Artifact
         run: |
-          mkdir codedeploy_zip_lambda
+          mkdir codedeploy_artifact
           zip -r index.js.zip index.js
           zip -r ${{ env.ARTIFACT_NAME }} index.js.zip codedeploy/*.sh appspec.yml
           pwd
