@@ -29,7 +29,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Copy Artifact to S3
         run: |
-          aws s3 sync ./codedeploy_artifact/${{ env.ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+          aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
       - name: Update Lambda Function Code
         run: |
           output=$(aws lambda update-function-code \
@@ -59,4 +59,4 @@ jobs:
           mv ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy_artifact/
       - name: Copy Artifact to S3
         run: |
-          aws s3 sync ./codedeploy_artifact/${{ env.CODEDEPLOY_ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+          aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
