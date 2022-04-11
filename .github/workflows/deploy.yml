@@ -37,5 +37,7 @@ jobs:
             --function-name  ${{ env.FUNCTION_NAME }} \
             --s3-bucket ${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }} --s3-key ${{ env.ARTIFACT_NAME }} \
             --publish)
-
           echo $output
+
+          version=$(echo $output | jq -r '.version')
+          echo $version
