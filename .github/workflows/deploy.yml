@@ -11,15 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build Deployment Artifact
+      - name: Build Lambda Function Artifact
         run: |
           mkdir codedeploy_artifact
           zip -r ${{ env.ARTIFACT_NAME }} index.js
-          zip -r ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy/*.sh appspec.yml
           pwd
           ls -al
           mv ${{ env.ARTIFACT_NAME }} codedeploy_artifact/
-          mv ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy_artifact/
           cd codedeploy_artifact/
           pwd
           ls -al
@@ -31,7 +29,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Copy Artifact to S3
         run: |
-          aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+          aws s3 sync ./codedeploy_artifact/${{ env.ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
       - name: Update Lambda Function Code
         run: |
           output=$(aws lambda update-function-code \
@@ -43,16 +41,22 @@ jobs:
           version=$(echo $output | jq -r '.Version')
           echo $version
 
-          echo "
-            version: 0.0 \
-            Resources: \
-              - myLambdaFunction: \
-                  Type: AWS::Lambda::Function \
-                  Properties: \
-                    Name: "csye6225-email-verification" \
-                    Alias: "csye6225-email-verification-alias" \
-                    CurrentVersion: "$LATEST" \
-                    TargetVersion: "$version" \
+          echo "version: 0.0 
+                Resources: 
+                  - myLambdaFunction: 
+                      Type: AWS::Lambda::Function
+                      Properties:
+                        Name: "csye6225-email-verification"
+                        Alias: "csye6225-email-verification-alias"
+                        CurrentVersion: "\$LATEST"
+                        TargetVersion: "$version"
           " > appspec.yml
 
           cat appspec.yml
+      - name: Build CodeDeploy Artifact
+        run: |
+          zip -r ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy/*.sh appspec.yml
+          mv ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy_artifact/
+      - name: Copy Artifact to S3
+        run: |
+          aws s3 sync ./codedeploy_artifact/${{ env.CODEDEPLOY_ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
