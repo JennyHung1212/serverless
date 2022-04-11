@@ -1,8 +1,10 @@
 const aws = require("aws-sdk");
 const ses = new aws.SES({ region: "us-east-1" });
+
 exports.handler = async function (event) {
   const message = JSON.parse(event.Records[0].Sns.Message);
   console.log("Message received from SNS:", message);
+
   const { email, token } = message;
   const params = {
     Destination: {
@@ -18,5 +20,6 @@ exports.handler = async function (event) {
     },
     Source: "noreply@dev.jenny-hung.me",
   };
+
   return ses.sendEmail(params).promise();
 };
