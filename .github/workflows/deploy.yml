@@ -39,5 +39,5 @@ jobs:
             --publish)
           echo $output
 
-          version=$(echo $output | jq -r '.version')
+          version=$(echo $output | jq -r '.Version')
           echo $version
