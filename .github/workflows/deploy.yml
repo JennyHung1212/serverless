@@ -1,6 +1,8 @@
 name: Lambda Function CI/CD
 env:
-  ARTIFACT_NAME: csye6225-lambda-${{ github.sha }}.zip
+  ARTIFACT_NAME: csye6225-lambda-function-${{ github.sha }}.zip
+  CODEDEPLOY_ARTIFACT_NAME: csye6225-lambda-codedeploy-${{ github.sha }}.zip
+  FUNCTION_NAME: csye6225-email-verification
 on: push
 jobs:
   build:
@@ -11,11 +13,12 @@ jobs:
       - name: Build Deployment Artifact
         run: |
           mkdir codedeploy_artifact
-          zip -r index.js.zip index.js
-          zip -r ${{ env.ARTIFACT_NAME }} index.js.zip codedeploy/*.sh appspec.yml
+          zip -r ${{ env.ARTIFACT_NAME }} index.js
+          zip -r ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy/*.sh appspec.yml
           pwd
           ls -al
           mv ${{ env.ARTIFACT_NAME }} codedeploy_artifact/
+          mv ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy_artifact/
           cd codedeploy_artifact/
           pwd
           ls -al
@@ -28,3 +31,8 @@ jobs:
       - name: Copy Artifact to S3
         run: |
           aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+      - name: Update Lambda Function Code
+        run: |
+          aws lambda update-function-code \
+            --function-name  ${{ env.FUNCTION_NAME }} \
+            --s3-bucket s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }} --s3-key ${{ env.ARTIFACT_NAME }}

@@ -1,0 +1,9 @@
+version: 0.0
+Resources:
+  - myLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: "csye6225-email-verification"
+        Alias: "csye6225-email-verification-alias"
+        CurrentVersion: "1"
+        TargetVersion: "2"
