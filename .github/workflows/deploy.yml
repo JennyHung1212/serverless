@@ -3,6 +3,7 @@ env:
   ARTIFACT_NAME: csye6225-lambda-function-${{ github.sha }}.zip
   CODEDEPLOY_ARTIFACT_NAME: csye6225-lambda-codedeploy-${{ github.sha }}.zip
   FUNCTION_NAME: csye6225-email-verification
+  FUNCTION_ALIAS: csye6225-email-verification-alias
 on: push
 jobs:
   build:
@@ -41,3 +42,17 @@ jobs:
 
           version=$(echo $output | jq -r '.Version')
           echo $version
+
+          echo "
+            version: 0.0 \
+            Resources: \
+              - myLambdaFunction: \
+                  Type: AWS::Lambda::Function \
+                  Properties: \
+                    Name: "csye6225-email-verification" \
+                    Alias: "csye6225-email-verification-alias" \
+                    CurrentVersion: "$LATEST" \
+                    TargetVersion: "$version" \
+          " > appspec.yml
+
+          cat appspec.yml
