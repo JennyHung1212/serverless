@@ -1,7 +1,7 @@
 name: Lambda Function CI/CD
 env:
   ARTIFACT_NAME: csye6225-lambda-function-${{ github.sha }}.zip
-  CODEDEPLOY_ARTIFACT_NAME: csye6225-lambda-codedeploy-${{ github.sha }}.zip
+  CODEDEPLOY_ARTIFACT_NAME: csye6225-lambda-codedeploy-${{ github.sha }}.yml
   FUNCTION_NAME: csye6225-email-verification
   FUNCTION_ALIAS: csye6225-email-verification-alias
   CODEDEPLOY_APPLICATION_NAME: csye6225-webapp-lambda
@@ -57,11 +57,10 @@ jobs:
           cat appspec.yml
       - name: Build CodeDeploy Artifact
         run: |
-          zip -r ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy/*.sh appspec.yml
-          mv ${{ env.CODEDEPLOY_ARTIFACT_NAME }} codedeploy_artifact/
+          mv appspec.yml ${{ env.CODEDEPLOY_ARTIFACT_NAME }}
       - name: Copy Artifact to S3
         run: |
-          aws s3 sync ./codedeploy_artifact s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+          aws s3 sync ${{ env.CODEDEPLOY_ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
       - name: CodeDeploy API Call
         run: |
           output=$(aws deploy create-deployment \
