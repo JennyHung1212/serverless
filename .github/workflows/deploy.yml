@@ -41,7 +41,9 @@ jobs:
           echo $output
 
           version=$(echo $output | jq -r '.Version')
+          currVersion=$(expr $version - 1)
           echo $version
+          echo $currVersion
 
           echo "version: 0.0 
           Resources: 
@@ -50,7 +52,7 @@ jobs:
                 Properties:
                   Name: "csye6225-email-verification"
                   Alias: "csye6225-email-verification-alias"
-                  CurrentVersion: "\$LATEST"
+                  CurrentVersion: "$currVersion"
                   TargetVersion: "$version"
           " > appspec.yml
 
