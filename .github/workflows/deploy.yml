@@ -44,14 +44,14 @@ jobs:
           echo $version
 
           echo "version: 0.0 
-                Resources: 
-                  - myLambdaFunction: 
-                      Type: AWS::Lambda::Function
-                      Properties:
-                        Name: "csye6225-email-verification"
-                        Alias: "csye6225-email-verification-alias"
-                        CurrentVersion: "\$LATEST"
-                        TargetVersion: "$version"
+          Resources: 
+            - myLambdaFunction: 
+                Type: AWS::Lambda::Function
+                Properties:
+                  Name: "csye6225-email-verification"
+                  Alias: "csye6225-email-verification-alias"
+                  CurrentVersion: "\$LATEST"
+                  TargetVersion: "$version"
           " > appspec.yml
 
           cat appspec.yml
@@ -69,7 +69,7 @@ jobs:
             --deployment-config-name CodeDeployDefault.LambdaAllAtOnce \
             --deployment-group-name ${{ env.CODEDEPLOY_APPLICATION_GROUP_NAME }} \
             --description "CSYE6225 CodeDeploy" \
-            --s3-location bucket=${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }},key=${{ env.CODEDEPLOY_ARTIFACT_NAME }},bundleType=zip \
+            --s3-location bucket=${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }},key=${{ env.CODEDEPLOY_ARTIFACT_NAME }},bundleType=YAML \
             --region ${{ secrets.AWS_REGION }} \
             --output json)
 
