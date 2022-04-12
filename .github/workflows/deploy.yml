@@ -57,10 +57,11 @@ jobs:
           cat appspec.yml
       - name: Build CodeDeploy Artifact
         run: |
-          mv appspec.yml ${{ env.CODEDEPLOY_ARTIFACT_NAME }}
+          mkdir codedeploy_artifact_lambda
+          mv appspec.yml codedeploy_artifact_lambda/${{ env.CODEDEPLOY_ARTIFACT_NAME }}
       - name: Copy Artifact to S3
         run: |
-          aws s3 sync ./${{ env.CODEDEPLOY_ARTIFACT_NAME }} s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
+          aws s3 sync ./codedeploy_artifact_lambda s3://${{ secrets.AWS_S3_CODEDEPLOY_BUCKET }}
       - name: CodeDeploy API Call
         run: |
           output=$(aws deploy create-deployment \
