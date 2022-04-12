@@ -45,6 +45,16 @@ jobs:
           echo $version
           echo $currVersion
 
+          aws lambda create-alias \
+            --function-name ${{ env.FUNCTION_NAME }} \
+            --name ${{ env.FUNCTION_NAME }}_alias_$version
+            --function-version $version
+
+          aws lambda create-alias \
+            --function-name ${{ env.FUNCTION_NAME }} \
+            --name ${{ env.FUNCTION_NAME }}_alias_$currVersion
+            --function-version $currVersion
+
           echo "version: 0.0 
           Resources: 
             - myLambdaFunction: 
