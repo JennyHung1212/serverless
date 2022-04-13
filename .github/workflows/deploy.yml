@@ -47,12 +47,12 @@ jobs:
 
           aws lambda create-alias \
             --function-name ${{ env.FUNCTION_NAME }} \
-            --name ${{ env.FUNCTION_NAME }}_alias_$version \
+            --name ${{ env.FUNCTION_ALIAS }}_$version \
             --function-version $version
 
           aws lambda create-alias \
             --function-name ${{ env.FUNCTION_NAME }} \
-            --name ${{ env.FUNCTION_NAME }}_alias_$currVersion \
+            --name ${{ env.FUNCTION_ALIAS }}_$currVersion \
             --function-version $currVersion
 
           echo "version: 0.0 
@@ -60,8 +60,8 @@ jobs:
             - myLambdaFunction: 
                 Type: AWS::Lambda::Function
                 Properties:
-                  Name: "csye6225-email-verification"
-                  Alias: "csye6225-email-verification-alias"
+                  Name: "${{ env.FUNCTION_NAME }}"
+                  Alias: "${{ env.FUNCTION_ALIAS }}_$currVersion"
                   CurrentVersion: "$currVersion"
                   TargetVersion: "$version"
           " > appspec.yml
