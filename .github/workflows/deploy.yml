@@ -6,7 +6,10 @@ env:
   FUNCTION_ALIAS: csye6225-email-verification-alias
   CODEDEPLOY_APPLICATION_NAME: csye6225-webapp-lambda
   CODEDEPLOY_APPLICATION_GROUP_NAME: csye6225-webapp-deployment-lambda
-on: push
+on:
+  push:
+    branches:
+      - main
 jobs:
   build:
     name: Build Artifact and Upload to S3
