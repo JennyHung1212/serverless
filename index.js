@@ -16,7 +16,7 @@ exports.handler = async function (event) {
           Data: `Please click the link below to verify your email address: http://dev.jenny-hung.me/v1/verifyUserEmail?email=${email}&token=${token}`,
         },
       },
-      Subject: { Data: "Email Verification" },
+      Subject: { Data: "CSYE6225 Webservice Email Verification" },
     },
     Source: "noreply@dev.jenny-hung.me",
   };
